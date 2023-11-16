@@ -1,0 +1,26 @@
+// Membuat Array
+var array1D = ee.Array([1, 2, 3]);
+print(array1D);  // [1,2,3]
+
+// Membutuhkan PixelType eksplisit jika tidak ada data.
+print(ee.Array([], ee.PixelType.int8()));  
+// Kosong [ ]
+print(ee.Array([[]], ee.PixelType.uint8()));  
+// Kosong [[ ]]
+print(ee.Array([[], []], ee.PixelType.float()));  // Kosong [[ ], [ ]]
+
+// 1-D Arrays
+print(ee.Array([0]));  // [0]
+print(ee.Array([0, 1]));  // [0, 1]
+
+// 2-D Arrays
+print(ee.Array([[1]]));  // [[1]]
+print(ee.Array([[0, 1], [2, 3]]));  // [[0,1],[2,3]]
+
+// Arrays dari ee.Number.
+print(ee.Array([ee.Number(123).toUint8()]));  
+// [123]
+
+// List berguna untuk membuat Array yang lebih besar.
+print(ee.Array(ee.List.sequence(0, 10, 2)));  
+// [0,2,4,6,8,10]
