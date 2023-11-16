@@ -1,0 +1,8 @@
+var pesanan_dict = {
+'lauk':'ayam', 
+'minuman':'jus jambu', 
+'nomor_meja':7
+};
+
+print(pesanan_dict.minuman); // jus jambu
+print(pesanan_dict['nomor_meja']); // 7 
