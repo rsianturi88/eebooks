@@ -1,0 +1,48 @@
+// Buat Feature dari list
+var features = [
+ee.Feature(ee.Geometry.Point(112.602, -7.9634), {name: 'SPBU 1'}),
+ee.Feature(ee.Geometry.Point(112.595, -7.92), {name: 'SPBU 2'}),
+ee.Feature(ee.Geometry.Point(112.6897, -7.952), {name: 'SPBU 3'}),
+ee.Feature(ee.Geometry.Point(112.642, -7.91), {name: 'SPBU 4'})
+];
+
+// Buat FeatureCollection dari list
+var spbu = ee.FeatureCollection(features);
+Map.centerObject(spbu);
+
+var region = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+.filter(ee.Filter.eq('ADM1_NAME', 'Jawa Timur'));
+
+Map.addLayer(region, {color: 'yellow'}, 'region', 0);
+
+// Muat tabel GOOGLE/Research/open-buildings/v3/polygons.
+var bangunan = ee.FeatureCollection('GOOGLE/Research/open-buildings/v3/polygons')
+.filterBounds(region);
+
+var bangunan_gte_075 = bangunan.filter('confidence >= 0.75');
+
+Map.addLayer(bangunan_gte_075, {color: '00FF00'}, 'Buildings confidence >= 0.75', 0);
+Map.setOptions('SATELLITE');
+
+print('spbu', spbu)
+print('t_gte_075', bangunan_gte_075.first())
+
+// Buat filter untuk mendeteksi fitur kiri dalam jarak 2 km dari fitur kanan.
+var joinFilter = ee.Filter.withinDistance({
+  distance: 2000,
+  leftField: '.geo',
+  rightField: '.geo'
+});
+
+// Terapkan gabungan. Bidang kiri berhubungan dengan koleksi utama dan rightField berhubungan dengan koleksi sekunder.
+
+var closeT_gte_075 = ee.Join.simple().apply({
+  primary: bangunan_gte_075,
+  secondary: spbu,
+  condition: joinFilter
+});
+
+// Buffer petrol station dalam radius 2km
+var bufferedspbu = spbu.map(function(f) { return f.buffer(2000, 100); });
+Map.addLayer(bufferedspbu, {color: 'b0b0b0'}, 'SPBU Buffer');
+Map.addLayer(closeT_gte_075, {color: 'yellow'}, 'Bangunan terlayani SPBU');
