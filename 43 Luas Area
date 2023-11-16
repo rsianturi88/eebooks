@@ -1,0 +1,37 @@
+var region = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+.filter(ee.Filter.eq('ADM1_NAME', 'Jawa Timur'));
+Map.addLayer(region, {color: 'yellow'}, 'region');
+Map.centerObject(region, 8);
+
+var stateArea = region.geometry().area()
+var stateAreaSqKm = ee.Number(stateArea).divide(1e6).round()
+print('stateAreaSqKm', stateAreaSqKm)
+
+var dataset = ee.Image('MODIS/061/MCD12Q1/2021_01_01').clip(region);
+
+var igbpLandCover = dataset.select('LC_Type1');
+
+// create mask with pixels values less than or equal to 5
+var mymask = igbpLandCover.eq(13);
+
+// Apply mask
+var urban = igbpLandCover.updateMask(mymask);
+
+var areaImage = urban.multiply(ee.Image.pixelArea())
+
+var area = areaImage.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: region.geometry(),
+  scale: 500,
+  maxPixels: 1e13,
+  bestEffort: true, 
+  tileScale: 16
+  })
+
+var urbanAreaSqKm = ee.Number(area.get('LC_Type1')).divide(1e6).round()
+print('urbanAreaSqKm', urbanAreaSqKm)
+
+var persenUrban= ee.Number(urbanAreaSqKm.divide(stateAreaSqKm)).format('%.2f');
+print('Persentase (Urban / Luas Wilayah)', persenUrban)
+
+Map.addLayer(urban, {}, 'urban');
