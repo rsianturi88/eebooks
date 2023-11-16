@@ -1,0 +1,34 @@
+// Tambahkan citra Sentinel 1
+var imgVH = ee.ImageCollection('COPERNICUS/S1_GRD')
+        .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
+        .filter(ee.Filter.eq('instrumentMode', 'IW'))
+        .select('VH')
+        .map(function(image) {
+          var edge = image.lt(-30.0);
+          var maskedImage = image.mask().and(edge.not());
+          return image.updateMask(maskedImage);
+        });
+
+// Tentukan alur orbit wahana 
+var desc = imgVH.filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING'));
+var asc = imgVH.filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'));
+
+// Tentukan periode pengamatan
+var jan_mar = ee.Filter.date('2017-01-01', '2017-03-31');
+var apr_jun = ee.Filter.date('2017-04-01', '2017-06-30');
+var jul_sept = ee.Filter.date('2017-07-01', '2017-09-30');
+
+// Gabungkan berdasarkan alur orbit dan bulan pengamatan
+var descChange = ee.Image.cat(
+        desc.filter(jan_mar).mean(),
+        desc.filter(apr_jun).mean(),
+        desc.filter(jul_sept).mean());
+
+var ascChange = ee.Image.cat(
+        asc.filter(jan_mar).mean(),
+        asc.filter(apr_jun).mean(),
+        asc.filter(jul_sept).mean());
+
+Map.setCenter(107.6274, -6.321, 10);
+Map.addLayer(ascChange, {min: -25, max: 5}, 'Multi-T Mean ASC', false);
+Map.addLayer(descChange, {min: -25, max: 5}, 'Multi-T Mean DESC', true);
