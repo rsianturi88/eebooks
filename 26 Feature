@@ -1,0 +1,32 @@
+// Membuat sebuah ee.Geometry.
+var polygon =
+    ee.Geometry.Polygon(
+        [[[110.20324, -7.60739],
+          [110.20324, -7.60856],
+          [110.20450, -7.60856],
+          [110.20450, -7.60739]]]);
+
+Map.addLayer(polygon, {color: 'blue'}, 'polygon', 1, 0.3);
+Map.setOptions('Satellite')
+Map.setCenter(110.2038, -7.6079, 18)
+
+// Membuat sebuah Feature dari Geometry.
+var atribut_1 = ee.Feature(polygon, {jenis: 'candi', nama: 'borobudur'});
+print('atribut_1', atribut_1);
+
+// Buat dictionary properti
+var atribut_baru = {jenis: 'candi', nama: 'borobudur', kabupaten: 'magelang', 
+            panjang_m: ee.Number(123), lebar_m: ee.Number(123), tinggi_m: 35
+};
+
+// Timpa properti lama dengan properti baru.
+var atribut_2 = atribut_1.set(atribut_baru);
+print('atribut_2', atribut_2);
+
+// Tetapkan properti baru.
+var tinggi_baru = atribut_2.set('tinggi_m', 42);
+print('tinggi_baru', tinggi_baru);
+
+// Dapatkan properti dari kata kunci tersebut.
+var nama_objek = ee.String(atribut_2.get('jenis')).cat(' ').cat(atribut_2.get('nama'));
+print('objek wisata: ', nama_objek);
