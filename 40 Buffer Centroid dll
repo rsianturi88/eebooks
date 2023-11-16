@@ -1,0 +1,42 @@
+// Buat polygon 1
+var polygon = ee.Geometry.Polygon([[[101.9, -1.4], [101.9, -1.5], [102.01, -1.5], [102.01, -1.4]]], null, false);
+          
+Map.centerObject(polygon, 11)
+
+// BUFFER - Terapkan fungsi Buffer
+var polygonBuffer = polygon.buffer({'distance': 1000});
+
+// Tampilkan Polygon 1 dan Buffer Polygon 1 pada panel peta
+Map.addLayer(polygon, {'color': 'black'}, 'Polygon [hitam]', 0);
+Map.addLayer(polygonBuffer, {'color': 'red'}, 'Buffer [merah]', 0);
+
+// CENTROID - Terapkan fungsi Centroid
+var polygonCentroid = polygon.centroid({'maxError': 1});
+
+// Cetak hasil di Console
+print('Koordinat Centroid Polygon =', polygonCentroid);
+
+// Tampilkan Centroid pada panel peta Display relevant geometries on the map.
+Map.addLayer(polygonCentroid, {'color': 'purple'}, 'Centroid [ungu]', 0);
+
+// Buat Polygon 2
+var inputGeom = ee.Geometry.Polygon([[[101.973, -1.46], [101.97, -1.53], [102.04, -1.53], [102.04, -1.46]]], null, false);
+
+// UNION - Terapkan fungsi union
+var polygonUnion = polygon.union({'right': inputGeom, 'maxError': 1});
+
+// Tampilkan Polygon 2 pada panel peta
+Map.addLayer(inputGeom, {'color': 'blue'}, 'Polygon 2 [biru]', 0);
+Map.addLayer(polygonUnion, {'color': 'yellow'}, 'Union [kuning]', 0);
+
+// DISSOLVE - Terapkan fungsi dissolve
+var polygonDissolve = polygon.dissolve({'maxError': 1});
+
+// Tampilkan Dissolve pada panel peta
+Map.addLayer(polygonDissolve, {'color': 'black'}, 'Dissolve [hitam]', 0);
+
+// INTERSECT - Terapakan fungsi intersection
+var polygonIntersection = polygon.intersection({'right': inputGeom, 'maxError': 1});
+
+// Tampilkan Intersection ke panel peta 
+Map.addLayer(polygonIntersection, {'color': 'green'}, 'Intersection [hijau]', 0);
