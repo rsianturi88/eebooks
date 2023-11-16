@@ -1,0 +1,34 @@
+// Tentukan region
+var region = ee.Geometry.Polygon(
+        [[[131.5849, -1.0609],
+          [131.5849, -1.0983],
+          [131.6273, -1.0983],
+          [131.6273, -1.0609]]]);
+
+Map.centerObject(region);
+Map.addLayer(region,{}, 'region', 0);
+
+// Tentukan ImageCollection
+var imgCol = ee.ImageCollection('MODIS/006/MOD13A1').filter(ee.Filter.date('2015-01-01', '2020-01-01')).select(['NDVI', 'EVI']);
+
+// Buat Chart dan cetak pada Console
+var chart = ui.Chart.image.series({
+  imageCollection: imgCol,
+  region: region,
+  reducer: ee.Reducer.mean(),
+  scale: 500,
+  xProperty: 'system:time_start'})
+.setSeriesNames(['EVI', 'NDVI'])
+.setOptions({
+  title: 'Rerata Nilai Indeks Vegetasi berdasarkan Tanggal',
+  hAxis: {title: 'Date', titleTextStyle: {italic: false, bold: true}},
+  vAxis: {
+    title: 'Indeks Vegetasi (x1e4)',
+    titleTextStyle: {italic: false, bold: true}
+  },
+  lineWidth: 5,
+  colors: ['e37d05', '1d6b99'],
+  curveType: 'function'
+});
+
+print('ui.Chart.image.series', chart);
