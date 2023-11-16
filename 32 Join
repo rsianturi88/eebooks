@@ -1,0 +1,34 @@
+// Tambahkan administrasi Indonesia
+var indonesia = ee.FeatureCollection("USDOS/LSIB_SIMPLE/2017")
+.filter(ee.Filter.eq('country_na', 'Indonesia'));
+
+print('indonesia', indonesia.first())
+Map.addLayer(indonesia, {}, 'indonesia', 0)
+
+// Pusatkan peta pada Indonesia
+Map.centerObject(indonesia,5)
+
+// Tambahkan kawasan lindung
+var protected_area = ee.FeatureCollection("WCMC/WDPA/current/polygons")
+
+print('protected_area', protected_area.first())
+Map.addLayer(protected_area, {}, 'protected_area', 0)
+
+// Definisikan spatial filter
+var spatialFilter = ee.Filter.intersects({
+  leftField: '.geo',
+  rightField: '.geo',
+  maxError: 10
+});
+
+// Definisikan join saveAll.
+var distSaveAll = ee.Join.saveAll({
+  matchesKey: 'indonesia',
+  measureKey: 'distance'
+});
+
+// Terapkan join.
+var protectedarea_indonesia = distSaveAll.apply(protected_area, indonesia, spatialFilter);
+
+print('protectedarea_indonesia', protectedarea_indonesia.first());
+Map.addLayer(protectedarea_indonesia, {}, 'protectedarea_indonesia')
