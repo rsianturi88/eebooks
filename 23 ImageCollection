@@ -1,0 +1,17 @@
+// Tambahkan batas administrasi
+var indonesia = ee.FeatureCollection('USDOS/LSIB_SIMPLE/2017').filter(ee.Filter.eq('country_na', 'Indonesia'));
+
+// Tambahkan koleksi citra NO2
+var collection = ee.ImageCollection('COPERNICUS/S5P/OFFL/L3_NO2').select('tropospheric_NO2_column_number_density')
+  .filterDate('2023-07-01', '2023-08-31');
+
+var band_viz = {
+  min: 0,
+  max: 0.0002,
+  palette: ['black', 'blue', 'purple', 'cyan', 'green', 'yellow', 'red']
+};
+
+// Visualisasikan pada peta
+Map.setCenter(109.825, -7.115, 7)
+Map.addLayer(collection.mean(), band_viz, 'S5P N02');
+Map.addLayer(indonesia, {color: 'yellow'}, 'Indonesia', 1, 0.2);
