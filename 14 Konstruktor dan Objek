@@ -1,0 +1,6 @@
+print(ee.String('Suatu tulisan'));  // Suatu tulisan
+
+// String kosong.
+var empty = ee.String('');
+print(empty);  // ''
+print(empty.length());  // 0
