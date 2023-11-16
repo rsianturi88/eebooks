@@ -1,0 +1,52 @@
+// Pembangkit listrik di Indonesia.
+var fc = ee.FeatureCollection('WRI/GPPD/power_plants')
+             .filter('country_lg == "Indonesia"');
+             
+Map.centerObject(fc, 4)
+
+/*
+Gunakan getInfo untuk mentransfer kumpulan fitur sisi server ke klien. 
+Hasilnya adalah sebuah objek.
+*/
+
+var fcClient = fc.getInfo();
+print('Client-side feature collection is an object', typeof fcClient);
+print('Feature collection object keys', Object.keys(fcClient));
+print('Array of features', fcClient.features);
+print('Properties of first feature', fcClient.features[0].properties);
+
+// Menghasilkan gambar jarak ke pembangkit listrik terdekat.
+var distance = fc.distance({searchRadius: 50000, maxError: 50});
+
+// Menampilkan gambar dan FeatureCollection di panel peta.
+Map.addLayer(distance, {max: 50000}, 'Distance to power plants');
+Map.addLayer(fc, {color: 'red'}, 'Power plants', false);
+
+// Pembangkit listrik teratas pada file FeatureCollection
+print('Power Plants', fc.first());
+
+// Melihat daftar nama properti FeatureCollection.
+print('Property Names', fc.propertyNames());
+
+// Dapatkan nilai properti yang terdaftar.
+print('Global power plant data provider as ee.ComputedObject',
+      fc.get('provider'));
+
+/*
+Nilai yang dikembalikan adalah ee.ComputedObject yang tidak memiliki metode apa pun
+proses lebih lanjut; dilemparkan ke kelas objek Earth Engine yang relevan untuk digunakan.
+*/
+print('Penyedia data pembangkit listrik global sebagai ee.String',
+      ee.String(fc.get('provider')));
+
+print('Jumlah Negara',
+      fc.aggregate_count_distinct('country_lg')); 
+      
+print('Daftar Nama Negara Per Features',
+      fc.aggregate_array('country_lg'));  // ee.List
+      
+print('Jumlah nilai bukan nol untuk properti fuel1',
+      fc.aggregate_count('fuel1')); 
+      
+print('Statistik deskriptif capacities (MW) pembangkit listrik',
+      fc.aggregate_stats('capacitymw'));
