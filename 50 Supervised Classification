@@ -1,0 +1,281 @@
+// Tambahkan titik-titik pengamatan untuk data training
+var lahan_terbangun = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon([[[112.469, -7.25], [112.46, -7.25], [112.47, -7.25], [112.47, -7.254]]]), {"landcover": 0, "system:index": "0" }),
+ee.Feature(ee.Geometry.Point([112.03, -6.89]), {"landcover": 0, "system:index": "1"}), 
+ee.Feature(ee.Geometry.Point([112.04, -6.89]),  {"landcover": 0, "system:index": "2"}), 
+ee.Feature(ee.Geometry.Point([112.14, -6.9]), { "landcover": 0, "system:index": "3"}), 
+ee.Feature(ee.Geometry.Point([112.16, -6.89]), {"landcover": 0, "system:index": "4" }), 
+ee.Feature(ee.Geometry.Point([112.03, -7.03]), {"landcover": 0, "system:index": "5" }),
+ee.Feature(ee.Geometry.Point([112.07184786431881, -7.034636813770723]),
+            {
+              "landcover": 0,"system:index": "6"
+            })]),
+tubuh_air = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon([[[112.79401325255334, -7.203574538176678], [112.80362628966272, -7.201530856372761], [112.8029396441549, -7.1953997557056555], [112.79572986632287, -7.189949818908151], [112.7919533160299, -7.200168396719479]]]),
+            {
+              "landcover": 1,"system:index": "0"
+            }),
+ee.Feature(ee.Geometry.Point([112.6436669642478, -6.9475750183043266]),
+            {
+              "landcover": 1,"system:index": "1"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.20993591308591, -6.796575746160855], [112.20993591308591, -6.81839349576002], [112.38846374511716, -6.81839349576002], [112.38846374511716, -6.796575746160855]]], null, false),
+            {
+              "landcover": 1,"system:index": "2"
+            })]),
+vegetasi = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon( [[[112.58166812926233, -7.193015416406741], [112.58338474303186, -7.196932538640386], [112.58922122984826, -7.192674795484549], [112.58664630919397, -7.189949818908151]]]),
+            {
+              "landcover": 2,"system:index": "0"
+            }),
+ee.Feature(ee.Geometry.Point([112.16072298627222, -6.915402626538308]),
+            {
+              "landcover": 2,"system:index": "1"
+            }),
+ee.Feature(ee.Geometry.Point([112.1767304096731, -6.912164777142771]),
+            {
+              "landcover": 2,"system:index": "2"
+            }),
+ee.Feature(ee.Geometry.Point([112.23909021402181, -6.9319456838994915]),
+            {
+              "landcover": 2,"system:index": "3"
+            }),
+ee.Feature(ee.Geometry.Point([112.3074988972488, -6.9417865513449835]),
+            {
+              "landcover": 2,"system:index": "4"
+            }),
+ee.Feature(ee.Geometry.Point([112.30981632583767, -6.9410623380102825]),
+            {
+              "landcover": 2,"system:index": "5"
+            })]),
+    lahan_terbangun_val = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon([[[112.74619255446478, -7.3224316855667135],[112.74705086134955, -7.327709758128033],[112.75082741164252, -7.327369239203926],[112.75117073439642, -7.322601946947392]]]),
+            {
+              "landcover": 0,"system:index": "0"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.70526481628416, -7.330362185139283],[112.70479274749754, -7.33108578268024],[112.70505023956296, -7.332064765717199],[112.70612312316892, -7.331000653618795]]]),
+            {
+              "landcover": 0,"system:index": "1"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.69823596675171, -7.347585064926679],[112.6978926439978, -7.347851083271733],[112.6979999323584, -7.348149023629102],[112.69867584903015, -7.347872364732458]]]),
+            {
+              "landcover": 0,"system:index": "2"
+            }),
+ee.Feature(ee.Geometry.Point([112.75797850984951, -7.264812010602443]),
+            {
+              "landcover": 0,"system:index": "3"
+            }),
+ee.Feature(ee.Geometry.Point([112.65378454663401, -7.176503890414145]),
+            {
+              "landcover": 0,"system:index": "4"
+            }),
+ee.Feature(ee.Geometry.Point([112.67378254638051, -7.174012945004662]),
+            {
+              "landcover": 0,"system:index": "5"
+            }),
+ee.Feature(ee.Geometry.Point([112.49996988961041, -7.219868034372594]),
+            {
+              "landcover": 0,"system:index": "6"
+            })]),
+    tubuh_air_val = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon([[[112.85725746535346, -7.3224316855667135],[112.85107765578314, -7.329582607558426],[112.85760078810736, -7.336222646620328],[112.86704216383978, -7.331114933053671]]]),
+            {
+              "landcover": 1,"system:index": "0"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.07163299612151, -7.069859059014029],[112.07064594320403, -7.070135887764176],[112.07010950140105, -7.070838606154143],[112.07279171041594, -7.070072004221179]]]),
+            {
+              "landcover": 1, "system:index": "1"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.0842930226718, -7.069262811911823],[112.08377803854094, -7.070370127346273], [112.08401407293425, -7.0710515509097425], [112.08455051473723, -7.07098766749337], [112.08455051473723, -7.069752586373642]]]),
+            {
+              "landcover": 1,"system:index": "2"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.26734524389015, -7.205124573998104], [112.26713066716896, -7.208275221283856], [112.26961975713478, -7.208019764211989], [112.26936226506935, -7.205550338424957]]]),
+            {
+              "landcover": 1, "system:index": "3"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.2107756064924, -7.220690369089123], [112.21274971232737, -7.218135861946083], [112.21163391337717, -7.216475424567627], [112.20961689219797, -7.2179655609569515]]]),
+            {
+              "landcover": 1,"system:index": "4"
+            }),
+ee.Feature(ee.Geometry.Point([113.14692186004837, -6.870052362270567]),
+            {
+              "landcover": 1,"system:index": "5"
+            }),
+ee.Feature(ee.Geometry.Point([112.90522264129837, -6.850963948526986]),
+            {
+              "landcover": 1, "system:index": "6"
+            }),
+ee.Feature(ee.Geometry.Point([113.42707322723587, -6.861871707218355]),
+            {
+              "landcover": 1, "system:index": "7"
+            }),
+ee.Feature(ee.Geometry.Point([113.64954637176712, -6.853690911605332]),
+            {
+              "landcover": 1,"system:index": "8"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[113.9835412597656, -7.471074272312875],[113.96568847656248, -7.472095495600476],[113.98834777832029, -7.482307597121666],[113.99040771484373, -7.473457122936961]]]),
+            {
+              "landcover": 1,"system:index": "9"
+            })]),
+vegetasi_val = ee.FeatureCollection([
+ee.Feature(ee.Geometry.Polygon([[[112.81460793454492, -7.351586087852238],[112.81786950070703, -7.357374558901239],[112.82284768063867, -7.351415837561263],[112.82095940549219, -7.3485215726298945]]]),
+            {
+              "landcover": 2,"system:index": "0"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.70708663555088, -7.3446182883843205],[112.70624978633823, -7.3446608516143606],[112.70638926120701, -7.34513968767151],[112.70754797550144, -7.345182250851629], [112.70763380618992, -7.3444799578585345]]]),
+            {
+              "landcover": 2,"system:index": "1"
+            }),
+ee.Feature(ee.Geometry.Polygon([[[112.64874185826231, -7.341297928307517],[112.64775480534483, -7.341340491855424],[112.64685358311583, -7.341936381098309],[112.64748658444334, -7.3423620157829195],[112.64892424847532, -7.34248970610886],[112.64931048657347, -7.341468182474698]]]),
+            {
+              "landcover": 2,"system:index": "2"
+            }),
+ee.Feature(ee.Geometry.Point([112.1351284605946, -6.973636373460985]),
+            {
+              "landcover": 2,"system:index": "3"
+            }),
+ee.Feature(ee.Geometry.Point([112.09006485815483, -6.965216948222725]),
+{
+"landcover": 2,"system:index": "4"
+})]),
+imageVisParam = {
+"opacity":1,"bands":["classification"],"min":0,"max":2,"gamma":1
+}, 
+geometry = ee.Geometry.Polygon(
+[[[111.92669464111326, -6.6333074102248055], [111.92669464111326, -7.342109858568709], [114.22833038330076, -7.342109858568709], [114.22833038330076, -6.6333074102248055]]], null, false);
+
+// Memilih citra Landsat 8 dan melakukan filter sesuai kebutuhan kajian
+var l8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
+.filterBounds(geometry).filterDate('2019-01-01','2020-01-31').median();
+
+// Fokus pada daerah studi
+Map.centerObject(geometry, 8)
+
+// Memilih features (variabel bebas)
+var bands = ['SR_B2', 'SR_B3','SR_B4','SR_B5','SR_B6','SR_B7','ST_B10'];
+
+// Memilih sample untuk training
+var gabungan_sample = lahan_terbangun.merge(tubuh_air).merge(vegetasi);
+
+// Memasangkan data training dengan features 
+var training = l8.select(bands).sampleRegions({
+  collection: gabungan_sample,
+  properties: ['landcover'],
+  scale: 30
+});
+
+// Cetak ukuran training data
+print('Jumlah data sample:', training.size());
+
+// Inisiasi classifier, sebagai contoh smileRandomForest()
+var classifier = ee.Classifier.smileRandomForest(10).train({
+    features: training,
+    classProperty: 'landcover',
+    inputProperties: bands
+  });
+
+// Menjalankan classifier pada features 
+var classified = l8.select(bands).classify(classifier);
+
+// Menampilkan citra Landsat 8 True Color Composite
+Map.addLayer(l8, 
+  {bands: ['SR_B4', 'SR_B3','SR_B2'], max:0.2}, 
+  'Unclassified Landsat 8',
+  false);
+
+// Menampilkan hasil klasifikasi
+Map.addLayer(classified, 
+  {min: 0, max:2, palette: ['orange', 'blue','green']}, 
+  'Classified Landsat 8');
+
+// Menghitung confusion matrix
+var confusion_matrix_training = classifier.confusionMatrix();
+print('Confusion Matrix dengan training data:', confusion_matrix_training);
+
+// Menghitung accuracy
+var accuracy_training = confusion_matrix_training.accuracy();
+print('Accuracy dengan training data:', accuracy_training);
+
+/* 
+Hasil accuracy dengan training data sangat tinggi 
+dikarenakan classifier sebelumnya telah mengenal data yang akan diuji. 
+Data testing diperlukan untuk menguji hasil klasifikasi. 
+*/
+  
+// Memilih sample untuk testing
+var gabungan_testing = lahan_terbangun_val.merge(tubuh_air_val).merge(vegetasi_val);
+
+// Memasangkan data testing dengan features
+var testing = l8.select(bands).sampleRegions({
+  collection: gabungan_testing,
+  properties: ['landcover'],
+  scale: 30
+});
+
+print('Jumlah data untuk testing:', testing.size());
+
+// Menggunakan classifier yang sudah ditraining untuk klasifikasi pada data testing 
+
+var klasifikasi_data_baru = testing.classify(classifier);
+print('Hasil klasifikasi:', klasifikasi_data_baru);
+
+// Hitung error Matrix antara landcover untuk validasi 
+// dengan hasil klasifikasi data testing (classification)
+var errorMatrix_classifier = klasifikasi_data_baru
+        .errorMatrix('landcover', 'classification');
+        
+print('Error Matrix testing data:', errorMatrix_classifier);
+
+// Hitung accuracy
+var accuracy_classifier = errorMatrix_classifier.accuracy();
+print('Accuracy testing data:', accuracy_classifier);
+
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px'
+  }
+});
+
+var legendTitle = ui.Label({
+  value: ' Supervised Classification',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    }
+});
+
+legend.add(legendTitle);
+var makeRow = function(color, name) {
+      var colorBox = ui.Label({
+        style: {
+          backgroundColor: '#' + color,
+          // Use padding to give the box height and width.
+          padding: '8px',
+          margin: '0 0 4px 0'
+        }
+      });
+      var description = ui.Label({
+        value: name,
+        style: {margin: '0 0 4px 6px'}
+      });
+      
+      // return the panel
+      return ui.Panel({
+        widgets: [colorBox, description],
+        layout: ui.Panel.Layout.Flow('horizontal')
+      });
+};
+
+var palette =['ffa500', '0000ff', '008000'];
+
+var names = ['Lahan Terbangun','Tubuh Air', 'Vegetasi'];
+
+for (var i = 0; i < 3; i++) {
+  legend.add(makeRow(palette[i], names[i]));
+  }  
+
+Map.add(legend);  
