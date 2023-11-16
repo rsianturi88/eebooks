@@ -1,0 +1,27 @@
+// Contoh Fungsi dengan 0 parameter
+var cetak = function() {
+  print("Ini dicetak dari dalam fungsi");
+};
+
+cetak() // Ini dicetak dari dalam fungsi
+cetak() // Ini dicetak dari dalam fungsi
+
+/* 
+Contoh Fungsi dengan 1 parameter. Fungsi ini menerima parameter dengan tipe data String
+*/
+var panggil = function(nama) {
+  return "Halo, " + nama + " Selamat mencoba GEE";
+};
+
+// Halo, Joko Selamat mencoba GEE
+print(panggil("Joko")) 
+
+/* 
+Contoh Fungsi dengan 2 parameter. Fungsi untuk menjumlahkan dua bilangan yang dimasukkan pengguna
+*/
+
+var penjumlahan = function(a,b) {
+  return a+b;
+};
+
+print('6 + 2 = ', penjumlahan(6,2)); // 8
