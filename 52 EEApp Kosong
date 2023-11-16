@@ -1,0 +1,32 @@
+var panelSamping = ui.Panel({
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    height: '100%',
+    width: '30%',
+  },
+});
+
+panelSamping.add(ui.Label('Judul Peta'));
+
+var panelPeta = ui.Map();
+
+var panelLegenda = ui.Panel({
+  widgets: [ui.Label("Legenda")],
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    position: 'bottom-right',
+  },
+});
+panelPeta.add(panelLegenda);
+
+var splitPanel = ui.SplitPanel({
+  firstPanel: panelSamping,
+  secondPanel: panelPeta,
+});
+
+ui.root.clear();
+
+var point = ee.Geometry.Point([120.74, -2.52]);
+panelPeta.centerObject(point, 4);
+
+ui.root.add(splitPanel);
