@@ -1,0 +1,45 @@
+/*
+Tampilkan rata-rata NDVI area studi berdasarkan DOY yang ditentukan
+*/
+
+// Tambahkan FeatureCollection dan subset tutupan lahan hutan.
+var features = [
+  ee.Feature(ee.Geometry.Point(113.43090561846128, 0.5274112214394502), {label: 'hutan'}),
+  ee.Feature(ee.Geometry.Point(110.41490043982303, -6.967566423478343), {label: 'kota'}),
+  ee.Feature(ee.Geometry.Point(107.75704786533004, -6.317325308397113), {label: 'sawah'})]
+
+var landcover = ee.FeatureCollection(features);
+print('landcover', landcover)
+
+var hutan = landcover.filter(ee.Filter.eq('label', 'hutan'));
+
+// Tambahkan ImageCollection dan pilih tahun pengamatan
+var vegIndices = ee.ImageCollection('MODIS/006/MOD13A1').filter(ee.Filter.date('2010-01-01', '2020-01-01')).select(['NDVI', 'EVI']);
+
+// Buat Chart dan cetak pada Console
+var chart = ui.Chart.image
+                .doySeriesByRegion({
+                  imageCollection: vegIndices,
+                  bandName: 'NDVI',
+                  regions: landcover,
+                  regionReducer: ee.Reducer.mean(),
+                  scale: 500,
+                  yearReducer: ee.Reducer.mean(),
+                  seriesProperty: 'label',
+                  startDay: 1,
+                  endDay: 365
+                })
+                .setOptions({
+                  title: 'Rerata Nilai NDVI berdasarkan Day of Year',
+                  hAxis: {
+                    title: 'Day of year',
+                    titleTextStyle: {italic: false, bold: true}
+                  },
+                  vAxis: {
+                    title: 'NDVI (x1e4)',
+                    titleTextStyle: {italic: false, bold: true}
+                  },
+                  lineWidth: 5,
+                  colors: ['0f8755', 'f0af07', '76b349'],
+                });
+print('ui.Chart.image.doySeriesByRegion', chart);
