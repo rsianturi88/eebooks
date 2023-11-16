@@ -1,0 +1,19 @@
+// Membuat titik-titik dari koordinat dengan ee.Geometry()
+var aceh = ee.Geometry.Point([95.3407, 5.57032]);
+var sumatra_utara = ee.Geometry.Point([98.67193, 3.5806]);
+var riau = ee.Geometry.Point([101.44566703542382, 0.5185]);
+var sumatra_barat = ee.Geometry.Point([100.3602, -0.9375]);
+var sumatra_selatan = ee.Geometry.Point([104.7504, -2.9765]);
+var jambi = ee.Geometry.Point([103.5835, -1.6033]);
+var bengkulu = ee.Geometry.Point([102.2839, -3.8208]);
+var lampung = ee.Geometry.Point([105.2585, -5.4412]);
+var babel = ee.Geometry.Point([106.1589, -2.1519]);
+
+var list_kantor = [aceh, sumatra_utara, riau, sumatra_barat, sumatra_selatan, jambi, bengkulu, lampung, babel]
+
+// Buat Geometry Multipoint dari list Geometry Point
+var kantor_gubernur = ee.Geometry.MultiPoint(list_kantor, 'EPSG:4326')
+
+// Tampilkan pada penal peta
+Map.addLayer(kantor_gubernur, {color:'red'}, 'Kantor Gubernur Pulau Sumatra');
+Map.centerObject(kantor_gubernur, 6);
