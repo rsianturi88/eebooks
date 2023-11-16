@@ -1,0 +1,3 @@
+var clientText = 'Ini adalah teks';
+print('tipe clientText', typeof clientText);  
+// string
