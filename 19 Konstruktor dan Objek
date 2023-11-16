@@ -1,0 +1,15 @@
+// Input numerik diinterpretasikan sebagai milidetik dari Unix epoch.
+print(ee.Date(0));  // Date (1970-01-01 00:00:00)
+
+// Faktor skala dapat membuat input numerik lebih mudah dibaca (i.e., 60 detik).
+print(ee.Date(60 * 1000));  // Date (1970-01-01 00:01:00)
+
+// Contoh input string tanggal ISO 8601
+print(ee.Date('2023'));  // Date (2023-01-01 00:00:00)
+print(ee.Date('2023-5-9'));  // Date (2023-05-09 00:00:00)
+print(ee.Date('2023-5-9'));  // Date (2023-05-09 00:00:00)
+print(ee.Date('2023-5-9T00:10:33'));  // Date (2023-05-09 00:10:33)
+print(ee.Date('2023-5-9T22:59:59'));  // Date (2023-05-09 22:59:59)
+
+// Konversi JavaScript sekarang ke Date Earth Engine
+print(ee.Date(Date.now()));
