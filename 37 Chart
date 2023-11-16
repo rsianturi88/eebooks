@@ -1,0 +1,47 @@
+/*
+Tampilkan rata-rata NDVI dan EVI pada area studi berdasarkan Day Of Year (DOY) yang ditentukan
+*/
+
+// Tambahkan Feature collection and subset hutan.
+var features = [
+  ee.Feature(ee.Geometry.Point(113.43090561846128, 0.5274112214394502), {label: 'hutan'}),
+  ee.Feature(ee.Geometry.Point(110.41490043982303, -6.967566423478343), {label: 'kota'}),
+  ee.Feature(ee.Geometry.Point(107.75704786533004, -6.317325308397113), {label: 'sawah'})]
+
+var landcover = ee.FeatureCollection(features);
+print('landcover', landcover)
+
+var hutan = landcover.filter(ee.Filter.eq('label', 'hutan'));
+
+// Tambahkan ImageCollection
+var vegIndices = ee.ImageCollection('MODIS/006/MOD13A1')
+                     .filter(ee.Filter.date('2010-01-01', '2020-01-01'))
+                     .select(['NDVI', 'EVI']);
+
+// Buat Chart dan cetak pada Console
+var chart =
+    ui.Chart.image
+        .doySeries({
+          imageCollection: vegIndices,
+          region: hutan,
+          regionReducer: ee.Reducer.mean(),
+          scale: 500,
+          yearReducer: ee.Reducer.mean(),
+          startDay: 1,
+          endDay: 365
+        })
+        .setSeriesNames(['EVI', 'NDVI'])
+        .setOptions({
+          title: 'Rerata Nilai Indeks Vegetasi berdasarkan Day of Year untuk Hutan',
+          hAxis: {
+            title: 'Day of year',
+            titleTextStyle: {italic: false, bold: true}
+          },
+          vAxis: {
+            title: 'Vegetation index (x1e4)',
+            titleTextStyle: {italic: false, bold: true}
+          },
+          lineWidth: 5,
+          colors: ['e37d05', '1d6b99'],
+        });
+print('ui.Chart.image.doySeries', chart);
