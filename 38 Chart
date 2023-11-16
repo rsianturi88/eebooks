@@ -1,0 +1,44 @@
+/*
+Tampilkan rata-rata NDVI area studi berdasarkan DOY yang ditentukan
+*/
+
+// Tambahkan FeatureCollection
+var features = [
+  ee.Feature(ee.Geometry.Point(113.43090561846128, 0.5274112214394502), {label: 'hutan'}),
+  ee.Feature(ee.Geometry.Point(110.41490043982303, -6.967566423478343), {label: 'kota'}),
+  ee.Feature(ee.Geometry.Point(107.75704786533004, -6.317325308397113), {label: 'sawah'})]
+
+var landcover = ee.FeatureCollection(features);
+print('landcover', landcover)
+
+var hutan = landcover.filter(ee.Filter.eq('label', 'hutan'));
+
+// Tambahkan ImageCollection dan pilih tahun 2012 and 2019
+var vegIndices = ee.ImageCollection('MODIS/006/MOD13A1').filter(ee.Filter.or(ee.Filter.date('2012-01-01', '2013-01-01'), ee.Filter.date('2019-01-01', '2020-01-01'))).select(['NDVI', 'EVI']);
+
+// Buat Chart dan cetak pada Console
+var chart = ui.Chart.image
+                .doySeriesByYear({
+                  imageCollection: vegIndices,
+                  bandName: 'NDVI',
+                  region: hutan,
+                  regionReducer: ee.Reducer.mean(),
+                  scale: 500,
+                  sameDayReducer: ee.Reducer.mean(),
+                  startDay: 1,
+                  endDay: 365
+                })
+                .setOptions({
+                  title: 'Rerata Nilai NDVI berasarkan Day of Year untuk Grassland',
+                  hAxis: {
+                    title: 'Day of year',
+                    titleTextStyle: {italic: false, bold: true}
+                  },
+                  vAxis: {
+                    title: 'NDVI (x1e4)',
+                    titleTextStyle: {italic: false, bold: true}
+                  },
+                  lineWidth: 5,
+                  colors: ['39a8a7', '9c4f97'],
+                });
+print('doySeriesByYear', chart);
