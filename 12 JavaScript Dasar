@@ -1,0 +1,13 @@
+// Buat pada sebuah file 
+exports.panggilan = function(nama, kota){
+  print('Perkenalkan, Saya ' + nama);
+  print('Saya tinggal di Kabupaten ' + kota); 
+  print('Hari ini ', ee.Date(Date.now()).format('EEEEEEEE dd MM YYYY'));
+  print('Senang berkenalan dengan Anda!');
+  print('Terima kasih telah membeli buku Pemantauan Bumi dengan Google Earth Engine!'); 
+}
+
+// Buat pada file lainnya. Pastikan repository file yang dipanggil benar
+var sapa = require('users/rsianturi/books:02_Fungsi');
+
+sapa.panggilan('Riswan Sianturi', 'Malang');
