@@ -1,0 +1,22 @@
+var admin = ee.FeatureCollection('FAO/GAUL/2015/level1')
+.filter(ee.Filter.eq('ADM1_NAME', 'Sulawesi Tengah'));
+var image = ee.Image('Oxford/MAP/accessibility_to_healthcare_2019').clip(admin);
+var meanReducer = ee.Reducer.mean(); 
+var meanValue = image.reduceRegion({ 
+  reducer: meanReducer, 
+  geometry: admin, 
+  scale: 900,
+  crs: 'EPSG: 4326', 
+  bestEffort: true, 
+  maxPixels: 10e13
+}); 
+var vis = {
+    "opacity":1,
+    "bands":["accessibility"],
+    "min":2,
+    "max":2000,
+    "palette":["00a421","23ff3b","fff214","ff9723","ff0000","810000"]
+};
+Map.centerObject(admin, 6)
+Map.addLayer(image, vis, 'citra aksesibilitas')
+print('rerata aksesibilitas ke fasilitas kesehatan', meanValue)
