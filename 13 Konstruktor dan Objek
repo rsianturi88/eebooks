@@ -1,0 +1,12 @@
+// Definisikan sebuah kelas (fungsi konstruktor)
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+ 
+// Buat objek baru menggunakan konstruktor
+var person1 = new Person('John', 30);
+var person2 = new Person('Jane', 25);
+
+console.log(person1.name); // Output: John
+console.log(person2.age);  // Output: 25
