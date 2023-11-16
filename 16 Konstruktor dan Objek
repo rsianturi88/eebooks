@@ -1,0 +1,24 @@
+// Objek ee.List
+var list = ee.List([5, 10, 15, 20, 25, 30]);
+
+// Ambil elemen pada posisi berbasis 0
+print('Element keempat', list.get(3));
+print('Elemen kedua dari akhir', list.get(-2));
+
+var list = ee.List([1, 2, 3, null, 6, 7]);
+
+/* 
+Filter daftar berdasarkan berbagai kondisi. Properti 'item' 
+digunakan untuk merujuk ke elemen daftar di fungsi ee.Filter.
+*/
+print('Daftar items sama dengan 3',
+      list.filter(ee.Filter.eq('item', 3)));
+
+print('Daftar items bukan null',
+      list.filter(ee.Filter.notNull(['item'])));
+print('Daftar items dalam daftar lain',
+      list.filter(ee.Filter.inList('item', [1, 98, 99])));
+print('Daftar items 3 ≤ 𝑥 ≤ 6',
+      list.filter(ee.Filter.and(
+        ee.Filter.gte('item', 3),
+        ee.Filter.lte('item', 6))));
