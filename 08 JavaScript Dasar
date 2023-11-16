@@ -1,0 +1,23 @@
+
+var a = ee.Number(6);
+var b = ee.Number(2);
+
+print('a = ', a, 'b = ', b);
+
+var c1 = a.add(b);
+var c2 = a+b;
+
+print('a.add(b) = ', c1); // 8
+print('a + b =', c2); // ee.Number(6)ee.Number(2)
+
+var d = a.subtract(b);
+var e = a.multiply(b); 
+var f = a.divide(b);
+
+print('a.subtract(b) = ', d, 'a.multiply(b) = ', e, 'f = a.divide(b) = ', f); // 4, 12, 3
+
+// Contoh lain
+var tabungan_server = ee.Number(20000);
+var jumlah = tabungan_server.add(2000);
+
+print(jumlah); // 22000
