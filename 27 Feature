@@ -1,0 +1,14 @@
+// Membuat sebuah ee.Geometry.
+var geometry_madura = ee.Geometry.LineString(
+        [[112.7216, -7.163],[112.71, -7.138],[112.714, -7.076],[112.745, -7.029],[112.817, -7.002],
+         [112.9796, -7.012],[113.149, -7.0298],[113.311, -7.017],[113.4063, -7.058],
+         [113.5983, -7.006],[113.829, -6.975],[113.865, -6.949],[113.995, -6.948],
+         [114.115, -6.972],[114.123, -6.9775]]);
+
+// Membuat Feature dari Geometry.
+var feature_madura = ee.Feature(geometry_madura, {pulau: 'madura', luas: 5379});
+print('feature_madura', feature_madura)
+
+Map.setOptions('ROADMAP');
+Map.centerObject(feature_madura, 10)
+Map.addLayer(feature_madura,{color:'red'}, 'Garis')
