@@ -1,0 +1,10 @@
+var list_buah = ['jeruk', 'mangga', 'apel', 'semangka'];
+
+// jeruk
+print('Buah urutan pertama: ' + list_buah[0]); 
+// mangga
+print('Buah urutan kedua: ', list_buah[1]); 
+// apel 
+print("Buah urutan ketiga: " + list_buah[2]); 
+// semangka 
+print("Buah urutan keempat: ", list_buah[3]); 
