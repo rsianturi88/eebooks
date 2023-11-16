@@ -1,0 +1,22 @@
+var boundary = ee.Geometry.Polygon([[[112.53, -7.9],[112.53, -8.07],[112.73, -8.076],[112.73, -7.9]]]);
+
+// Memilih Sentinel S2A dan memfilter berdasarkan areas studi dan waktu kajian
+var S2A = ee.ImageCollection('COPERNICUS/S2_SR').filterBounds(boundary).filter(ee.Filter.dayOfYear(91, 273)).filterDate('2020', '2022').map(maskS2clouds).median();
+
+// Fokus di wilayah studi
+Map.centerObject(boundary, 13);
+
+// Fungsi untuk memilih citra tanpa awan dan fill gap 
+function maskS2clouds(image) {
+  var qa = image.select('QA60');
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+      .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  return image.updateMask(mask).divide(1);
+}  
+          
+// ------ Visualisasi Citra Sentinel 2A True Color Composite -------
+var RGBTrue = S2A.select(['B4', 'B3', 'B2']).clip(boundary);
+var RGBparam = { min: 400, max: 2600,};
+Map.addLayer(RGBTrue, RGBparam, 'Sentinel TCC', false);
