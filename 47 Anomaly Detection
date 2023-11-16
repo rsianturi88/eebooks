@@ -1,0 +1,55 @@
+var region = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+.filter(ee.Filter.eq('ADM1_NAME', 'Jawa Tengah'));
+
+Map.centerObject(region, 8)
+Map.addLayer(region, {}, 'Study Area', 0)
+
+var col = ee.ImageCollection("MODIS/061/MOD13Q1")
+          .select('EVI')
+          .filterBounds(region);
+
+function scaling(img){
+  return img.multiply(0.0001)
+}
+// Membuat list tahun 
+var stepList = ee.List.sequence(2000,2022);
+
+// Gunakan daftar tahun untuk filter temporal dan reduce dengan median(). Tambahkan juga system:time_start untuk memungkinkan fungsi filter waktu.
+
+var filterCollection = stepList.map(function(year){
+  var startDate = ee.Date.fromYMD(year,1,1);
+  var endDate = ee.Date.fromYMD(year,12,31);
+  var composite_i = col.filterDate(startDate, endDate)
+                        .map(scaling)
+                        .median()
+                        .set('system:time_start',startDate);
+  return composite_i;
+});
+
+var eviCollection = ee.ImageCollection(filterCollection);
+
+var y2020 = eviCollection.filterDate('2020-01-01','2020-12-31')
+  .first().clip(region);
+  
+var eviParams = {min: 0, max: 1, palette: ['FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901',
+    '66A000', '529400', '3E8601', '207401', '056201', '004C00', '023B01',
+    '012E01', '011D01', '011301']};
+    
+Map.addLayer(y2020, eviParams, '2020 EVI', 0);
+
+//  Anomalies (Z-Score). Z-Score = (Year-Mean)/Standard Deviation
+var yMean = eviCollection.mean().clip(region);
+var stdImg = eviCollection.reduce(ee.Reducer.stdDev()).clip(region);
+
+Map.addLayer(yMean, eviParams, 'Mean EVI 2000-2022 ', 0)
+Map.addLayer(stdImg, eviParams, 'Stdev EVI 2000-2022 ', 0)
+
+// Annual anomalies 2020
+var Anomaly2020 = y2020.subtract(yMean).divide(stdImg);
+var anomParams = {min: -3, max: 3, palette: ['red','yellow', 'green']};
+Map.addLayer(Anomaly2020, anomParams, '2020 Anomaly', 0);
+
+
+var maskAnomaly2020 = Anomaly2020.lt(0);
+maskAnomaly2020 = Anomaly2020.updateMask(maskAnomaly2020);
+Map.addLayer(maskAnomaly2020, {palette :'red'}, 'maskAnomaly2020');
