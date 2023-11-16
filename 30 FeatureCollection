@@ -1,0 +1,30 @@
+Map.setOptions('ROADMAP');
+
+// Tambahkan FeatureCollection dari dataset: 'RESOLVE' ecoregions.
+var ecoregions = ee.FeatureCollection('RESOLVE/ECOREGIONS/2017');
+print(ecoregions.first())
+
+// Buat image kosong yang akan digunakan sebagai dasar pemberian warna masing-masing feature, cast ke tipe data byte.
+var empty = ee.Image().byte();
+
+// Beri warna semua batas poligon dengan angka yang sama.
+var outline = empty.paint({
+  featureCollection: ecoregions,
+  color: 1,
+  width: 2
+});
+
+var palette = ['purple', 'blue', 'green', 'yellow', 'orange', 'red'];
+
+
+// Beri warna poligon dengan warna berbeda
+var fills = empty.paint({
+  featureCollection: ecoregions,
+  color: 'BIOME_NUM',
+});
+Map.addLayer(fills, {palette: palette, max: 14}, 'Bioma Warna');
+Map.addLayer(outline, {palette: '000000'}, 'Batas Bioma', 0);
+
+// Beri warna poligon dan batas secara bersama-sama
+var filledOutlines = empty.paint(ecoregions, 'BIOME_NUM').paint(ecoregions, 0, 2);
+Map.addLayer(filledOutlines, {palette: ['000000'].concat(palette), max: 14}, 'Batas dan Warna Bioma', 0);
