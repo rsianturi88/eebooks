@@ -1,0 +1,7 @@
+var serverText = ee.String('Ini bukan teks!');
+print('tipe serverText', typeof serverText);  
+// object
+
+print('Apakah ini adalah EE object?',
+serverText instanceof ee.ComputedObject);  
+// true
