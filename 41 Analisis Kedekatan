@@ -1,0 +1,45 @@
+// Tambahkan area studi
+var geometry = ee.Geometry.Polygon(
+        [[[111.5, -7.16],
+          [111.5, -7.58],
+          [112.4, -7.584],
+          [112.4, -7.16]]]);
+
+// Tambahkan data sebaran permukiman
+var permukiman = ee.Image("DLR/WSF/WSF2015/v1");
+
+var permukiman2vektor = permukiman.reduceToVectors({
+  geometry:geometry, 
+  scale:10,
+  crs:'EPSG: 4326',
+  maxPixels:10e13})
+
+var permukimanGeometry = permukiman2vektor.geometry()
+Map.addLayer(permukimanGeometry, {color: 'orange',  width: 1}, 'Permukiman');
+
+Map.setCenter(112.5913, -7.5664, 9);
+
+// Buat 50 titik pengamatan secara acak
+var GPS = ee.FeatureCollection.randomPoints(
+    {region: geometry, points: 50, seed: 0, maxError: 1});
+
+print('titik GPS', GPS);
+
+Map.addLayer(geometry, {color: 'yellow'}, 'Area Studi', 0);
+Map.addLayer(GPS, {color: 'red'}, 'titik GPS');
+
+var jarak = function(feature){
+  var titik = feature.geometry()
+  var titik2permukiman = permukimanGeometry.distance({'right': titik, 'maxError': 1});
+  
+  return feature.set({'jarak': titik2permukiman})
+}
+
+var hasil = GPS.map(jarak)
+print('Jarak titik ke permukiman diurutkan dari yang terdekat', hasil)
+
+Export.table.toDrive({
+ collection: hasil,
+ description:'GPS_Permukiman',
+ folder: 'EE_Pemantauan_Bumi'
+});
