@@ -1,0 +1,49 @@
+// Tambahkan data Daerah Aliran Sungai (DAS)
+Map.setOptions('ROADMAP');
+
+var watershed = ee.FeatureCollection('WWF/HydroSHEDS/v1/Basins/hybas_5')
+.map(function(feature){
+    var area = feature.geometry().area()
+    var areaSqKm = ee.Number(area).divide(1e6).round()
+    return feature.set('luassqkm', areaSqKm);
+  });
+
+// Cetak FeatureCollection di Console untuk melihat propertinya
+print('watershed', watershed.first())
+Map.addLayer(watershed, null, 'Watershed Dunia', 0);
+
+// Tambahkan batas administrasi Indonesia
+var indonesia = ee.FeatureCollection('USDOS/LSIB_SIMPLE/2017')
+.filter(ee.Filter.eq('country_na', 'Indonesia'));
+
+// Cetak FeatureCollection di Console untuk melihat propertinya
+print('indonesia', indonesia.first())
+Map.centerObject(indonesia, 4)
+
+var styleParams = {
+  fillColor: 'yellow',
+  color: 'red',
+  width: 1,
+};
+
+var indonesia_style = indonesia.style(styleParams);
+Map.addLayer(indonesia_style, {}, 'Indonesia', 0);
+
+// Filter hanya Daerah Aliran Sungai yang berada di Indonesia.
+var watershed_indonesia = watershed.filterBounds(indonesia);
+
+// Periksa jumlah DAS
+print('Count after filter:', watershed_indonesia.size());
+
+// Filter hanya DAS yang luasnya > 50000 km2
+var watershed_besar = watershed_indonesia.filter(ee.Filter.gt('luassqkm', 50000));
+
+// Periksa jumlah DAS
+print('Count after filtering by size:', watershed_besar.size());
+
+var visualization = {
+  color: 'blue',
+  strokeWidth: 1
+};
+
+Map.addLayer(watershed_besar, visualization, 'Watershed Besar', true, 0.8);
