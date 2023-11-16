@@ -1,0 +1,153 @@
+// Buat layer peta
+var map = ui.Map();
+var evi = ee.ImageCollection("LANDSAT/LC08/C01/T1_8DAY_EVI").select('EVI')
+    .filterDate('2019-01-01', '2020-01-01');
+var vis = {min: 0, max: 1, palette: ['ffffff', 'ce7e45', 'df923d', 'f1b555', 'fcd163', '99b718', '74a901',
+    '66a000', '529400', '3e8601', '207401', '056201', '004c00', '023b01',
+    '012e01', '011d01', '011301']};
+map.addLayer(evi, vis, 'evi'); 
+// Tentukan titik awal
+map.setCenter(-94.84497, 39.01918, 8);
+// Atur bentuk cursor.
+map.style().set('cursor', 'crosshair');
+var point = ee.Geometry.Point(107.894,-6.3462);
+map.centerObject(point, 10);
+// Buat panel kiri
+var panel = ui.Panel({
+  style: {
+    width: '30%',
+    border: '3px solid #ddd',
+  }
+});
+// buat Label judul
+var judul = ui.Label({
+  value: 'Time-series EVI',
+  style: {
+    fontSize: '18px',
+    fontWeight: '100',
+    padding: '10px',
+  }
+})
+// buat Label instruksi
+var instruksi = ui.Label({
+  value: 'Klik pada peta untuk menampilkan Grafik EVI',
+  style: {
+    color: 'gray',
+    padding: '10px',
+  }
+});
+var panelChart = ui.Panel();
+var panelTeks = ui.Panel();
+// tambahkan widgets pada panel kiri secara berurutan dari atas ke bawah
+panel.add(judul);
+panel.add(panelTeks);
+panel.add(instruksi);
+panel.add(panelChart);
+// buat split panel
+var splitPanel = ui.SplitPanel({
+  firstPanel: panel,
+  secondPanel: map,
+});
+// Hapus panel peta awal
+ui.root.clear();
+// Buat panel peta baru dengan splitPanel
+ui.root.add(splitPanel);
+// Fungsi untuk menambahkan titik pengamatan pada panel peta
+function showPointOnMap(point) {
+  var dot = ui.Map.Layer(point, {color: 'FF0000'});
+  map.layers().set(1, dot);
+}
+// Fungsi untuk membuat Chart dari time-series EVI
+function makeChart(point) {
+  var chart = ui.Chart.image.series(evi, point, ee.Reducer.mean(), 200);
+  chart.setOptions({
+    title: 'Time-series EVI',
+    vAxis: {title: 'EVI'},
+    hAxis: {title: 'Tanggal', format: 'MM-yy', gridlines: {count: 7}},
+  });
+  
+  panelChart.clear();
+  panelChart.add(chart);
+}
+// Fungsi untuk melakukan masking EVI berdasarkan nilai ambang batas 
+function maskevi(value) {
+  map.layers().reset();
+  
+  // membuat objek angka dengan JavaScript client
+  var threshold = Number(value);
+  var eviMean = evi.mean();
+  var masked = eviMean.mask(eviMean.gt(threshold));
+  map.addLayer(masked, vis, 'evi');
+}
+// Membuat text box untuk masukan nilai oleh pengguna
+function makeTextbox() {
+  
+  // buat Label textbox
+  var textboxLabel = ui.Label({
+    value: 'Tentukan nilai minimum EVI:',
+    style: {stretch: 'vertical', padding: '10px'}
+  });
+  
+  // buat textbox
+  var textbox = ui.Textbox({
+    placeholder: 'Angka antara -1 dan 1',
+    value: -0.7,
+    // panggil fungsi maskevi() jika dalam kotak angka berubah
+    onChange: maskevi,
+    style: {width: '100px'}
+  });
+  
+  maskevi(-0.7);
+  
+  // tambahkan Label texbox dan textbox padan panel teks
+  panelTeks.add(ui.Panel(
+    [textboxLabel, textbox],
+    ui.Panel.Layout.flow('horizontal')));
+}
+// Hubungkan onClick eventhandler dengan objek panel peta
+map.onClick(function(coordinates){
+  var point = ee.Geometry.Point([coordinates.lon, coordinates.lat]);
+  showPointOnMap(point);
+  makeChart(point); 
+}); 
+// Panggil fungsi untuk menampilkan peta, membuat grafik, dan mengubah grafik berdasarkan nilai ambang batas
+showPointOnMap(point);
+makeChart(point);
+makeTextbox();
+// Membuat Legend
+// 1. Buat judul legenda
+var legendTitle = ui.Label({
+  value: 'EVI Mean 2019',
+  style: {fontWeight: 'bold'}
+});
+// 2. Buat Color Bar untuk legenda
+// Buat Fungsi thumbnail colobar untuk legenda berdasarkan palette.
+function makeColorBarParams(palette) {
+  return {
+    bbox: [0, 0, 1, 0.1],
+    dimensions: '100x10',
+    format: 'png',
+    min: 0,
+    max: 1,
+    palette: palette,
+  };
+}
+var colorBar = ui.Thumbnail({
+  image: ee.Image.pixelLonLat().select(0),
+  params: makeColorBarParams(vis.palette),
+  style: {stretch: 'horizontal', margin: '0px 8px', maxHeight: '24px'},
+});
+// 3. Buat Label legenda - panel dengan tiga angka
+var legendLabels = ui.Panel({
+  widgets: [
+    ui.Label(vis.min, {margin: '4px 8px'}),
+    ui.Label(
+        (vis.max / 2),
+        {margin: '4px 8px', textAlign: 'center', stretch: 'horizontal'}),
+    ui.Label(vis.max, {margin: '4px 8px'})
+  ],
+  layout: ui.Panel.Layout.flow('horizontal')
+});
+var legendPanel = ui.Panel([legendTitle, colorBar, legendLabels]);
+// Tambahkan panel legenda pada panel kiri
+panel.widgets().set(4, legendPanel);
