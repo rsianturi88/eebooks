@@ -1,0 +1,8 @@
+// petik satu
+var contoh_string1 = 'Ini adalah string'; 
+
+// petik dua 
+var contoh_string2 = "Ini juga adalah string"; 
+
+print(contoh_string1);
+print('Tulisan ini akan ditampilkan pada tab Console.');
