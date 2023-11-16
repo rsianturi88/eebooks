@@ -1,0 +1,21 @@
+// Memilih titik pengamatan
+var geometry = ee.Geometry.Point([107.31, -6.06]);
+// Centering visualisasi pada EE objek
+Map.centerObject(geometry, 9);
+
+// Filter peta berdasarkan periode analisis dan lokasi
+var evi = ee.ImageCollection("LANDSAT/LC08/C01/T1_8DAY_EVI") 
+.filterBounds(geometry)
+.filterDate('2013-04-11', '2020-12-01')
+
+// Menampilkan titik pengamatan sebagai chart time series. 
+print(ui.Chart.image.series(evi, geometry, ee.Reducer.mean(), 500));
+
+// Menampilkan EVI dengan visualisasi pallete
+Map.addLayer(evi, {
+  min: 0, 
+  max: 1, 
+  palette: ['blue', '8bc4f9', 'c9995c', 'c7d270', '8add60', '097210', 'green','darkgreen']
+}, 'EVI', 0);
+
+Map.addLayer(geometry, {color:'black'}, 'Titik pengamatan');
