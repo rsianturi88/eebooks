@@ -1,0 +1,57 @@
+// Tambahkan area studi
+var region = ee.Geometry.Polygon([[[112.57, -7.9],[112.57, -8.17],[112.84, -8.17],[112.84, -7.9]]]);
+Map.addLayer(region, {}, 'region');
+
+// Pusatkan panel peta pada area studi
+Map.centerObject(region); 
+
+// Tambahkan citra SRTM
+var srtm = ee.Image('CGIAR/SRTM90_V4');
+Map.addLayer(srtm, {min: 1, max: 3265}, 'srtm');
+
+// Dapatkan dan simpan resolusi piksel dalam variabel scale 
+var scale = srtm.projection().nominalScale(); 
+print('SRTM scale in meters', scale);
+
+// Terapkan algoritma (i.e., slope) terhadap citra SRTM
+var slope = ee.Terrain.slope(srtm); 
+Map.addLayer(slope, {min: 0, max :60}, 'slope');
+
+// Terapkan algoritma (i.e., aspek) terhadap citra SRTM (dalam degrees).
+var aspect = ee.Terrain.aspect(srtm); 
+Map.addLayer(aspect, {min: 87, max: 255}, 'aspect');
+
+// Terapkan algoritma (i.e., hillshade) terhadap citra SRTM 
+var hillshade = ee.Terrain.hillshade(srtm); 
+Map.addLayer(hillshade, {min: 87, max: 255}, 'hillshade');
+
+// Konversi degree ke radians, hitung nilai sin dan cos dari aspect.
+var sinImage = aspect.divide(180).multiply(Math.PI).sin(); 
+Map.addLayer(sinImage, {min: -1, max: 1}, 'sinImage');
+
+var cosImage = aspect.divide(180).multiply(Math.PI).cos(); 
+Map.addLayer(cosImage, {min: -1, max: 1}, 'cosImage');
+
+// Hitung rerata ketinggian dalam area studi 
+var meanElevation = srtm.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: region,
+  scale: scale
+});
+print(meanElevation);
+
+// Dapatkan rerata dan cetak ke Console
+var mean = meanElevation.get('elevation');
+print('Mean elevation', mean);
+
+// Clip ke area studi
+var ClipCosImage = cosImage.clip(region);
+
+// Export citra yang sudah di-clip ke Google Drive
+Export.image.toDrive({ 
+image: ClipCosImage, 
+description: 'ClipCosImage', 
+folder: 'Images',
+region: region,
+scale: scale 
+});
