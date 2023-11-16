@@ -1,0 +1,27 @@
+// Buat objek geometri: titik, garis, poligon.
+var poligon_bali = ee.Geometry.Polygon(
+        [[[115.101, -8.331],[115.101, -8.521],[115.318, -8.521],[115.318, -8.331]]]);
+          
+var poligon_sorong = ee.Geometry.Polygon(
+        [[[130.865, -0.563],[130.865, -1.079],[131.349, -1.079],[131.349, -0.563]]]);
+          
+var polyline_kalimantan = ee.Geometry.LineString(
+        [[111.665, -0.3697],[113.5118, -1.687],[114.829, 0.597],[115.4448, -0.369],[117.0266, 2.266]]);
+
+var titik_medan = ee.Geometry.Point([98.66, 3.61]);
+var titik_jakarta = ee.Geometry.Point([106.82, -6.17]);
+
+// Buat List objek Feature dari objek Geometry
+var features = [
+  ee.Feature(poligon_bali, {name: 'Bali'}),
+  ee.Feature(titik_medan, {name: 'Medan'}),
+  ee.Feature(titik_jakarta, {name: 'Jakarta'}),
+  ee.Feature(polyline_kalimantan, {name: 'Kalimantan'}),
+  ee.Feature(poligon_sorong, {name: 'Sorong'})
+];
+
+// Membuat FeatureCollection dari List objek Feature.
+var FeatureCollection = ee.FeatureCollection(features);
+print(FeatureCollection);
+Map.centerObject(FeatureCollection)
+Map.addLayer(FeatureCollection, {color: 'red'}, 'Objek Pengamatan')
