@@ -1,0 +1,2 @@
+var salam = 'Halo Dunia! Apa kabar?';
+print(salam);
