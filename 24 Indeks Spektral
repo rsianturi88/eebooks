@@ -1,0 +1,34 @@
+var geometry = ee.Geometry.Polygon([[[112.45, -7.8],[112.45, -7.9],[112.54, -7.9],[112.54, -7.8]]]);
+Map.centerObject(geometry, 12);
+
+var S2A = ee.ImageCollection('COPERNICUS/S2_SR').filterBounds(geometry).filterDate('2018-01-01', '2019-12-31').median()
+
+// Memilih band NIR dan Red dari Citra Sentinel 2A
+var nir = S2A.select('B8');
+var red = S2A.select('B4');
+
+// Menghitung NDVI
+// Cara 1:
+var ndvi_1 = nir.subtract(red).divide(nir.add(red)).rename('NDVI').clip(geometry);
+
+// Cara 2:
+var ndvi_2 = S2A.normalizedDifference(["B8", "B4"]).rename('NDVI').clip(geometry);
+
+// Cara 3: 
+var ndvi_3 = S2A.expression(
+  "(b8 - b4) / (b8 + b4)", 
+  {
+    b8: S2A.select("B8"), 
+    b4: S2A.select("B4")
+  }).rename('NDVI').clip(geometry);
+  
+
+// visParams untuk visualisasi NDVI
+var NDVIparam = {min: 0, max: 1, palette:['FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718',
+               '74A901', '66A000', '529400', '3E8601', '207401', '056201',
+               '004C00', '023B01', '012E01', '011D01', '011301']};
+
+// Menambah layer NDVI pada tampilan GEE
+Map.addLayer(ndvi_1, NDVIparam, 'NDVI_Cara_1');
+Map.addLayer(ndvi_2, NDVIparam, 'NDVI_Cara_2');
+Map.addLayer(ndvi_3, NDVIparam, 'NDVI_Cara_3');
