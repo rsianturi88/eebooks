@@ -1,0 +1,2 @@
+var tabungan = 10000;
+print('10000 + 2000 = ', tabungan + 2000); // 12000
