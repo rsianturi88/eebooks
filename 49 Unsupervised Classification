@@ -1,0 +1,79 @@
+var geometry = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+.filter(ee.Filter.eq('ADM1_NAME', 'Dki Jakarta'));
+
+// Centering tampilan layar
+Map.centerObject(geometry, 11);
+Map.addLayer(geometry, {}, 'Study Area', 0)
+
+var luas_area_study = geometry.geometry().area(1).divide(1000*1000)
+print('Luas Area Study (km2)', luas_area_study)
+
+// Pilih citra untuk dianalisis
+var L8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
+.filterBounds(geometry)
+.filter(ee.Filter.dayOfYear(91, 247))
+.filterDate('2013', '2022')
+.median()
+.clip(geometry);
+
+// Tentuka parameter visualisasi
+var imageVisParam = {
+  "opacity":1,
+  "bands":["SR_B4","SR_B3","SR_B2"],
+  "min":7487,
+  "max":13906,
+  "gamma":1
+};
+
+// Visualisasi True Color Landsat 8
+Map.addLayer(L8, imageVisParam, 'Landsat 8 True Color', false);
+
+// Pilih sample untuk "training"
+var training = L8.sample({
+  region: geometry, 
+  scale: 30, 
+  numPixels: 5000
+  });
+
+/* Pilih clusterer untuk melakukan clustering. 
+Sebagai contoh hasilnya wekaLVQ() dengan hasil 6 cluster. 
+*/
+var clusterer = ee.Clusterer.wekaLVQ({numClusters: 8}).train(training);
+var hasil = L8.cluster(clusterer);
+
+//Select the class from the classified image
+var kelas = hasil.select('cluster');
+
+//Calculate the pixel area in square kilometer
+var area_kelas1 = kelas.multiply(ee.Image.pixelArea()).divide(1000*1000);
+
+//Reducing the statistics for your study area
+var stat_kelas = area_kelas1.reduceRegion({
+  reducer: ee.Reducer.sum(),
+  geometry: geometry,
+  scale: 1000,
+  maxPixels: 10e13,
+  bestEffort: true,
+  tileScale: 16
+});
+
+//Get the sq km area for vegetation
+print ('Area stat_kelas (in sq.km)', stat_kelas);
+
+//  hitung luas semua kelas pada hasil cluster -
+var class_areas = ee.Image.pixelArea().divide(1000*1000).addBands(hasil)
+  .reduceRegion({
+    reducer: ee.Reducer.sum().group({
+      groupField: 1,
+      groupName: 'kelas',
+    }),
+    geometry: geometry,
+    scale: 1000,
+    maxPixels: 10e13,
+    bestEffort: true,
+    tileScale: 16
+  }).get('groups');
+
+print('luas cluster (Ha)', class_areas);
+
+Map.addLayer(hasil.randomVisualizer(),{}, 'Clustering Landsat 8', 0);
