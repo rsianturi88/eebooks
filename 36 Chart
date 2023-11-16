@@ -1,0 +1,39 @@
+/*
+Tampilkan NDVI pada area studi berdasarkan rentang waktu yang ditentukan
+*/
+
+// Tambahkan FeatureCollection
+var features = [
+  ee.Feature(ee.Geometry.Point(113.43090561846128, 0.5274112214394502), {label: 'hutan'}),
+  ee.Feature(ee.Geometry.Point(110.41490043982303, -6.967566423478343), {label: 'kota'}),
+  ee.Feature(ee.Geometry.Point(107.75704786533004, -6.317325308397113), {label: 'sawah'})]
+
+var landcover = ee.FeatureCollection(features);
+print('landcover', landcover)
+
+// Tambahkan ImageCollection
+var vegIndices = ee.ImageCollection('MODIS/006/MOD13A1').filter(ee.Filter.date('2010-01-01', '2020-01-01')).select(['NDVI', 'EVI']);
+
+// Buat Chart dan cetak pada Console
+var chart =
+    ui.Chart.image
+        .seriesByRegion({
+          imageCollection: vegIndices,
+          band: 'NDVI',
+          regions: landcover,
+          reducer: ee.Reducer.mean(),
+          scale: 500,
+          seriesProperty: 'label',
+          xProperty: 'system:time_start'
+        })
+        .setOptions({
+          title: 'Rerata NDVI berdasarkan Tanggal',
+          hAxis: {title: 'Date', titleTextStyle: {italic: false, bold: true}},
+          vAxis: {
+            title: 'NDVI (x1e4)',
+            titleTextStyle: {italic: false, bold: true}
+          },
+          lineWidth: 5,
+          colors: ['f0af07', '0f8755', '76b349'],
+        });
+print('seriesByRegion', chart);
