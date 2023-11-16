@@ -1,0 +1,26 @@
+// Input Dictionary 
+var dict = {
+  B1: 982,
+  B2: 674,
+  B3: 345,
+  B4: 553,
+  B5: 839
+};
+print('ee.Dictionary dari data dictionary', ee.Dictionary(dict));
+
+// Daftar pasangan key/value
+var list = [
+ 'B1', 982,
+ 'B2', 674,
+ 'B3', 345,
+ 'B4', 553,
+ 'B5', 839
+];
+print('ee.Dictionary dari list', ee.Dictionary(list));
+
+// Untuk membuat ee.Dictionary dari dua daftar key dan value,
+// gunakan konstruktor ee.Dictionary.fromLists.
+var keys = ['B3', 'B4', 'B5'];
+var values = [345, 553, 839];
+print('Kamus dari daftar kunci dan nilai',
+      ee.Dictionary.fromLists(keys, values));
